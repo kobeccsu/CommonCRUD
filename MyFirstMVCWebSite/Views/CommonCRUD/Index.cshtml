@@ -1,0 +1,118 @@
+﻿@model PagedList.IPagedList<MyFirstMVCWebSite.Models.Order_Detail>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<link type="text/css" rel="stylesheet" href="~/Content/PagedList.css" />
+
+    <h2>通用增删改查页面</h2>
+    <h3>@ViewBag.Keys</h3>
+
+    <ul>
+        @foreach (var item in ViewBag.Keys)
+        {
+            <li>@item</li>
+        }
+
+    </ul>
+
+    <table>
+        @foreach (var item in ViewBag.Data)
+        {
+            int count = 0, a = 1;
+            foreach (System.Reflection.PropertyInfo p in item.GetType().GetProperties())
+            {
+                if (count % 2 == 0 && a == Math.Abs(a))
+                {
+                    @:<tr>
+                    a = -a;
+                }
+
+
+                if (count % 2 == 0 && a != Math.Abs(a))
+                {
+                    @:</tr>
+                    a = -a;
+                }
+
+                <td>@p.Name</td>
+                <td>@Html.TextBox(p.Name)</td>
+                count++;
+            }
+
+            break;
+        }
+
+    </table>
+
+    @using (Html.BeginForm())
+    {
+        <input type="submit" name="add" value="Add" />
+        <input type="submit" name="delete" value="Delete" />
+        <input type="submit" name="update" value="Update" />
+    }
+    <hr />
+
+    <table>
+
+        @{bool isFirstIn = true;}
+        @foreach (var item in ViewBag.Data)
+        {
+            <tr>
+                @if (isFirstIn)
+                {
+                    <td>数据操作</td>
+                    foreach (System.Reflection.PropertyInfo p in item.GetType().GetProperties())
+                    {
+                        isFirstIn = false;
+                        <td>@p.Name</td>
+                    }
+                }
+                else
+                {
+                    //Dictionary<string, string> postParam = new Dictionary<string, string>();
+                    RouteValueDictionary postParam = new RouteValueDictionary();
+
+                    //object[] postParam = new object[ViewBag.Keys.Length];
+                    <td>
+                        @Html.ActionLink("Edit", "") |
+                        @foreach (System.Reflection.PropertyInfo p in item.GetType().GetProperties())
+                    {
+                        for (int i = 0; i < ViewBag.Keys.Length; i++)
+                        {
+                            if (p.Name == ViewBag.Keys[i])
+                            {
+                                //postParam[i] = (p.GetValue(item).ToString());
+                                postParam.Add(p.Name, p.GetValue(item).ToString());
+                            }
+                        }
+
+                        //ViewData["keys"] = postParam;
+                        if (p.Name == ViewBag.Keys[ViewBag.Keys.Length - 1])
+                        {
+                            //@Ajax.ActionLink("删除", "del", "CommonCRUD", new AjaxOptions(){ HttpMethod = "Delete", Confirm = "确定要删除吗", UpdateTargetId = "" })
+                            //@Html.ActionLink("Delete", "Index", new { id = p.GetValue(item) });
+
+                            using (Html.BeginForm("Delete", "CommonCRUD", postParam /* MyFirstMVCWebSite.Util.DynamicExecuteCode.GetMyType(postParam) */))
+                            {
+                                <input type="submit" value="Del" />
+                            }
+                            break;
+                        }
+                    }
+                    </td>
+                    foreach (System.Reflection.PropertyInfo p in item.GetType().GetProperties())
+                    {
+                        <td>@p.GetValue(item)</td>
+                    }
+                }
+            </tr>
+        }
+
+    </table>
+@Html.Raw(ViewBag.text+"<br />")
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
