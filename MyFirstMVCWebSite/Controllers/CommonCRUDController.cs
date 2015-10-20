@@ -19,6 +19,7 @@ using System.Text;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Data.Objects.DataClasses;
+//using System.Linq.Dynamic;
 
 namespace MyFirstMVCWebSite.Controllers
 {
@@ -35,14 +36,30 @@ namespace MyFirstMVCWebSite.Controllers
             ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewBag.DateSortParm = sortOrder == "Date" ? "date_desc" : "Date";
 
-            var query = from a in db.Order_Details
-                        select a;
+            /*"new(Quantity,OrderID, ProductID)"*/
+            var query =
+                db.Order_Details.Select(c => new { c.ProductID, c.OrderID, c.Quantity }).OrderBy(c=>c.OrderID);
+
+            //var query =
+            //    db.Order_Details.Select("new(Quantity,OrderID, ProductID)").OrderBy("OrderID");
+
+                //from a in db.order_details
+                //select new { a.product, a.quantity, a.orderid };
+            
             ViewBag.Keys = GetKeyNames<Order_Detail>(db);
-            query = query.OrderBy(s => s.OrderID);
+
             int pageSize = 10;
             int pageNumber = (page ?? 1);
 
             ViewBag.Data = query.ToPagedList(pageNumber, pageSize);
+
+            //ViewBag.Data = query.Skip(pageNumber * 10).Take(10);
+
+            //string zhoule = "sdf"; 
+            //Expression filter = (n => n * n);
+            //var One = filter.Compile();
+            //Console.WriteLine("Result: {0},{1}", One(5), One(1));
+            //ViewBag.text = zhoule.GetMassWord(2);
 
             return View(ViewBag.Data);
         }

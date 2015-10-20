@@ -1,9 +1,12 @@
-﻿@model PagedList.IPagedList<MyFirstMVCWebSite.Models.Order_Detail>
+﻿@model PagedList.IPagedList
 @using PagedList.Mvc;
 
 @{
     ViewBag.Title = "Index";
 }
+<link href="~/Scripts/miniui/themes/default/miniui.css" rel="stylesheet" />
+<script type="text/javascript" src="~/Scripts/miniui/miniui.js"></script>
+<script type="text/javascript" src="~/Scripts/jsrender.min.js"></script>
 
 <link type="text/css" rel="stylesheet" href="~/Content/PagedList.css" />
 
@@ -97,7 +100,7 @@
 
                             using (Html.BeginForm("Delete", "CommonCRUD", postParam /* MyFirstMVCWebSite.Util.DynamicExecuteCode.GetMyType(postParam) */))
                             {
-                                <input type="submit" value="Del" />
+                                <input type="submit" value="Del" onclick="return confirm('确认删除?')" />
                             }
                             break;
                         }
@@ -112,7 +115,41 @@
         }
 
     </table>
-@Html.Raw(ViewBag.text+"<br />")
+    <!--<input id="helloBtn" class="mini-button" text="Hello" />-->
+
+    <input id="helloBtn" value="Hello" type="button" />
+    @Html.Raw(ViewBag.text+"<br />")
     Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
 
     @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    
+
+    <div id="container">
+
+
+    </div>
+
+
+    <!-- 首先这是一段脚本 -->
+    <script id="testMVVM" type="text/x-jsrender">
+        <div>
+            {{:#index+1}}<b>{{:name}}</b>{{:releaseYear}}
+        </div>
+        
+    </script>
+<script language="javascript" type="text/javascript">
+    function onHelloClick() {
+        //var button = e.sender;
+        //mini.alert("Hello mini world");
+        
+    }
+    var movies = [{ name: 'zhoulei', releaseYear: '20121212' },
+        { name: 'hezhaohui', releaseYear: '19780730' }
+    ];
+    $("#container").html($("#testMVVM").render(movies));
+
+    $("#helloBtn").die().live("click", function () {
+        alert("hello mini world")
+    });
+
+</script>
