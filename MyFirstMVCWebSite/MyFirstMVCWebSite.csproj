@@ -269,6 +269,10 @@
     <Compile Include="Util\LocalExtension.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Data\InnerDatabase.mdf" />
+    <Content Include="App_Data\InnerDatabase_log.ldf">
+      <DependentUpon>InnerDatabase.mdf</DependentUpon>
+    </Content>
     <Content Include="Content\PagedList.css" />
     <Content Include="Content\themes\base\images\ui-bg_flat_0_aaaaaa_40x100.png" />
     <Content Include="Content\themes\base\images\ui-bg_flat_75_ffffff_40x100.png" />
@@ -937,7 +941,6 @@
     <Content Include="Scripts\jsrender.min.js.map" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Scripts\miniui\themes\gray\images\layout\" />
     <Folder Include="Scripts\miniui\themes\gray\images\panel\" />
     <Folder Include="Scripts\miniui\themes\gray\images\splitter\" />
